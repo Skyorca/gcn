@@ -120,7 +120,7 @@ def preprocess_features(features):
 
 
 def normalize_adj(adj):
-    """Symmetrically normalize adjacency matrix."""
+    """Symmetrically normalize sparse adjacency matrix."""
     adj = sp.coo_matrix(adj)
     rowsum = np.array(adj.sum(1))
     d_inv_sqrt = np.power(rowsum, -0.5).flatten()

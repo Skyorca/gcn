@@ -20,9 +20,10 @@ class Model(object):
 
         self.vars = {}
         self.placeholders = {}
-
-        self.layers = []
-        self.activations = []
+        
+        #前传时用
+        self.layers = [] 
+        self.activations = [] 
 
         self.inputs = None
         self.outputs = None
@@ -35,18 +36,21 @@ class Model(object):
     def _build(self):
         raise NotImplementedError
 
-    def build(self):
+    def build(self): #高度抽象化，整体化地构建模型
         """ Wrapper for _build() """
         with tf.variable_scope(self.name):
-            self._build()
+            self._build() # 组装模型的“骨骼”
 
-        # Build sequential layer model
+        # Build sequential layer model 在子类MLP/GCN里，build首先调用_build()建立模型框架放到layers里。
+        # 这是一个前传的过程，MLP和GCN都一样遵循
         self.activations.append(self.inputs)
         for layer in self.layers:
             hidden = layer(self.activations[-1])
             self.activations.append(hidden)
         self.outputs = self.activations[-1]
-
+        
+        '''
+        '''
         # Store model variables for easy access
         variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=self.name)
         self.vars = {var.name: var for var in variables}
